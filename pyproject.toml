@@ -1,66 +1,63 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "proteus-score"
 version = "1.0.0"
-description = "Zero-shot protein conformational flexibility from flow-matching trajectory displacement"
+description = "PROtein TrajEctory Uncertainty Score - zero-shot conformational plasticity from flow-matching structure predictors"
 readme = "README.md"
-license = { text = "MIT" }
-authors = [
-  { name = "TODO", email = "TODO" },
-]
+license = { file = "LICENSE" }
 requires-python = ">=3.10"
-keywords = ["protein", "conformational dynamics", "flow matching", "fold switching", "bioinformatics"]
-classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Intended Audience :: Science/Research",
-  "Topic :: Scientific/Engineering :: Bio-Informatics",
-  "License :: OSI Approved :: MIT License",
-  "Programming Language :: Python :: 3",
+authors = [
+    { name = "Luiz Felipe Piochi" },
+    { name = "Yasaman Karami", email = "yasaman.karami@inria.fr" },
+    { name = "Hamed Khakzad",  email = "hamed.khakzad@inria.fr" },
 ]
-
-# Core runtime dependencies — no GPU or large model weights required
+keywords = [
+    "protein-structure",
+    "conformational-dynamics",
+    "flow-matching",
+    "structural-biology",
+    "deep-learning",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
 dependencies = [
-  "numpy>=1.24",
-  "scipy>=1.10",
-  "pandas>=2.0",
-  "scikit-learn>=1.3",
-  "matplotlib>=3.7",
-  "tqdm",
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pandas>=2.0",
+    "scikit-learn>=1.3",
 ]
 
 [project.optional-dependencies]
-# SimpleFold backend (Apple Inc., MIT License — installed separately)
 simplefold = [
-  "torch>=2.1",
-  "einops",
-  # SimpleFold itself must be installed from source; see README
+    "torch>=2.1",
+    "einops>=0.7",
 ]
 dev = [
-  "pytest>=7",
-  "pytest-cov",
-  "ruff",
-  "mypy",
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.1",
 ]
 
-[project.scripts]
-proteus-score   = "proteus.cli:score_cli"
-proteus-extract = "proteus.cli:extract_cli"
-
 [project.urls]
-Homepage   = "https://github.com/TODO/proteus"
-Paper      = "TODO"
-Data       = "TODO_ZENODO"
+Homepage  = "https://github.com/khakzad-lab/PROTEUS"
+Paper     = "https://doi.org/TODO"
+Zenodo    = "https://zenodo.org/record/TODO"
+
+# Extraction and scoring are exposed as standalone scripts under ./scripts/
+# rather than installed console entry points, since the extraction script
+# requires SimpleFold to be on PYTHONPATH (and SimpleFold is not on PyPI).
 
 [tool.setuptools.packages.find]
-where = ["."]
 include = ["proteus*"]
-
-[tool.ruff]
-line-length = 100
-target-version = "py310"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
+exclude = ["tests*"]

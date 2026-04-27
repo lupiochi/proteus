@@ -1,26 +1,37 @@
 cff-version: 1.2.0
-message: "If you use PROTEUS in your research, please cite the following paper."
-type: software
-title: "PROTEUS: PROtein TEmporal Uncertainty Space"
+message: "If you use PROTEUS, please cite the following paper."
+title: "PROTEUS: PROtein TrajEctory Uncertainty Score"
 abstract: >
-  Zero-shot detection of protein conformational plasticity from the latent
-  trajectory of a flow-matching structure predictor.
-version: "1.0.0"
-license: MIT
-repository-code: "https://github.com/TODO/proteus"
+  PROTEUS is a zero-shot method for quantifying protein conformational plasticity
+  from the latent trajectory of a flow-matching structure predictor (default
+  backend: SimpleFold). It compares per-residue trunk embeddings between the
+  sequence-only regime (flow t=0) and the structure-converged regime (flow t=1)
+  and reports the maximum per-residue L2 displacement as a single plasticity score.
+type: software
 authors:
   - family-names: Piochi
     given-names: Luiz Felipe
+    affiliation: "Université de Lorraine, Inria, F-54000 Nancy, France"
   - family-names: Karami
     given-names: Yasaman
+    email: yasaman.karami@inria.fr
+    affiliation: "Université de Lorraine, Inria, F-54000 Nancy, France"
   - family-names: Khakzad
     given-names: Hamed
+    email: hamed.khakzad@inria.fr
+    affiliation: "Université de Lorraine, Inria, F-54000 Nancy, France"
+version: "1.0.0"
+license: MIT
+repository-code: "https://github.com/lupiochi/PROTEUS"
+keywords:
+  - protein structure
+  - conformational dynamics
+  - flow matching
+  - structural biology
+  - deep learning
 preferred-citation:
   type: article
-  title: >
-    A flow-matching protein structure predictor encodes conformational plasticity
-    in its denoising trajectory: zero-shot detection, orthogonal validation,
-    and proteome-scale application
+  title: "Unraveling protein conformational plasticity with PROTEUS"
   authors:
     - family-names: Piochi
       given-names: Luiz Felipe
@@ -28,6 +39,6 @@ preferred-citation:
       given-names: Yasaman
     - family-names: Khakzad
       given-names: Hamed
-  journal: "Nature Machine Intelligence"
   year: 2026
+  journal: "TODO"
   doi: "TODO"

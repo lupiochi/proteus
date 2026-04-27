@@ -1,1 +1,0 @@
-../../../../plddt/run_atlas_analysis.py
