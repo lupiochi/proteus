@@ -1,5 +1,7 @@
 # PROTEUS
 
+![PROTEUS Logo](logo_PROTEUS.png)
+
 **PRO**tein **T**raj**E**ctory **U**ncertainty **S**core — a zero-shot method
 for detecting protein conformational plasticity from the latent trajectory of a
 flow-matching structure predictor.
