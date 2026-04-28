@@ -4,8 +4,9 @@
 for detecting protein conformational plasticity from the latent trajectory of a
 flow-matching structure predictor.
 
-[![Paper](https://img.shields.io/badge/paper-TODO-blue)](TODO)
-[![Zenodo](https://img.shields.io/badge/data-Zenodo-orange)](TODO)
+Preprint: https://www.biorxiv.org/content/10.64898/2026.04.27.721098v1
+
+[![Paper](https://img.shields.io/badge/paper-blue)](https://www.biorxiv.org/content/10.64898/2026.04.27.721098v1)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## What is PROTEUS?
@@ -174,8 +175,10 @@ flow-matching predictor.
 @article{piochi2026proteus,
   title   = {Unraveling protein conformational plasticity with PROTEUS},
   author  = {Piochi, Luiz Felipe and Karami, Yasaman and Khakzad, Hamed},
-  journal = {TODO},
-  year    = {2026}
+  journal = {bioRxiv},
+  year    = {2026},
+  doi     = {10.64898/2026.04.27.721098},
+  url     = {https://www.biorxiv.org/content/10.64898/2026.04.27.721098v1}
 }
 ```
 
