@@ -151,6 +151,58 @@ def encode_sequences_fast(
     return esmaa_with_special, lengths
 
 
+# ---------------------------------------------------------------------------
+# ESM-2 3B loading (HuggingFace backend)
+# ---------------------------------------------------------------------------
+
+ESM_HF_3B = "facebook/esm2_t36_3B_UR50D"   # HF mirror of fair-esm esm2_t36_3B_UR50D
+
+
+class _HFAlphabetShim:
+    """Fair-esm-alphabet-compatible view over a HuggingFace EsmTokenizer.
+
+    Exposes only the attributes the tokenisation helpers need (cls_idx, eos_idx,
+    padding_idx, get_idx) so encode_sequences_fast() and _af2_to_esm() work
+    unchanged with the HuggingFace backend. The ESM-2 vocabulary is identical
+    between the two implementations (verified by token-id equality), so the
+    resulting token tensors match the facebookresearch/esm path exactly.
+    """
+
+    def __init__(self, tokenizer):
+        self._tok = tokenizer
+        self.cls_idx = tokenizer.cls_token_id
+        self.eos_idx = tokenizer.eos_token_id
+        self.padding_idx = tokenizer.pad_token_id
+
+    def get_idx(self, token: str) -> int:
+        return self._tok.convert_tokens_to_ids(token)
+
+
+def load_esm_hf(model_name: str, device: torch.device):
+    """Load ESM-2 3B via HuggingFace transformers.
+
+    Uses fp16 on CUDA together with low_cpu_mem_usage to keep peak system RAM far
+    below the ~20 GB fp32 facebookresearch/esm load (which OOMs free Colab),
+    while reproducing the same per-layer representations. Returns
+    (model, alphabet_shim, af2_to_esm) matching the fair-esm path.
+    """
+    from transformers import AutoTokenizer, EsmModel
+
+    use_fp16 = torch.device(device).type == "cuda"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = EsmModel.from_pretrained(
+        model_name,
+        torch_dtype=torch.float16 if use_fp16 else torch.float32,
+        low_cpu_mem_usage=True,
+        add_pooling_layer=False,
+    )
+    model = model.to(device).eval()
+
+    esm_dict = _HFAlphabetShim(tokenizer)
+    af2_to_esm = _af2_to_esm(esm_dict)
+    return model, esm_dict, af2_to_esm
+
+
 @torch.no_grad()
 def extract_esm_combined(
     esmaa: torch.Tensor,
@@ -163,12 +215,22 @@ def extract_esm_combined(
     batch_size = len(lengths)
     max_len = max(lengths)
 
-    res = esm_model(
-        esmaa,
-        repr_layers=range(esm_model.num_layers + 1),
-        need_head_weights=False,
-    )
-    esm_s = torch.stack([v for _, v in sorted(res["representations"].items())], dim=2)
+    if hasattr(esm_model, "config"):  # HuggingFace transformers EsmModel
+        attn = (esmaa != esm_model.config.pad_token_id).long()
+        out = esm_model(input_ids=esmaa, attention_mask=attn,
+                        output_hidden_states=True)
+        # hidden_states[k] == fair-esm representations[k] for all k (incl. last,
+        # both post emb_layer_norm_after); verified numerically on esm2_t6_8M.
+        esm_s = torch.stack(out.hidden_states, dim=2)
+    else:  # facebookresearch/esm
+        res = esm_model(
+            esmaa,
+            repr_layers=range(esm_model.num_layers + 1),
+            need_head_weights=False,
+        )
+        esm_s = torch.stack(
+            [v for _, v in sorted(res["representations"].items())], dim=2
+        )
     esm_s = esm_s[:, 1:-1]
     esm_s = esm_s[:, :max_len]
 
@@ -419,6 +481,10 @@ def main():
                         help="Sampling temperature tau (paper default: 0.3).")
     parser.add_argument("--batch_size", type=int, default=2)
     parser.add_argument("--num_workers", type=int, default=4)
+    parser.add_argument(
+        "--esm_backend", type=str, default="hf", choices=["hf", "fair"],
+        help="ESM-2 3B loader: 'hf' (transformers, fp16 on GPU, low CPU RAM) or "
+             "'fair' (facebookresearch/esm, fp32). Both produce matching embeddings.")
     parser.add_argument("--max_length", type=int, default=512)
     parser.add_argument("--device", type=str,
                         default="cuda" if torch.cuda.is_available() else "cpu")
@@ -516,11 +582,15 @@ def main():
     )
 
     # Load ESM
-    print("\nLoading ESM-2 3B (SimpleFold conditioning)...")
-    esm_model, esm_dict = esm_registry["esm2_3B"]()
-    esm_model = esm_model.to(device)
-    esm_model.eval()
-    af2_to_esm = _af2_to_esm(esm_dict)
+    if args.esm_backend == "hf":
+        print("\nLoading ESM-2 3B via HuggingFace transformers (fp16 on GPU, low CPU RAM)...")
+        esm_model, esm_dict, af2_to_esm = load_esm_hf(ESM_HF_3B, device)
+    else:
+        print("\nLoading ESM-2 3B via facebookresearch/esm (fp32)...")
+        esm_model, esm_dict = esm_registry["esm2_3B"]()
+        esm_model = esm_model.to(device)
+        esm_model.eval()
+        af2_to_esm = _af2_to_esm(esm_dict)
 
     # Process
     print("\nExtracting per-residue embeddings...")

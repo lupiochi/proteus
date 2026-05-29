@@ -42,6 +42,7 @@ dependencies = [
 simplefold = [
     "torch>=2.1",
     "einops>=0.7",
+    "transformers>=4.40",
 ]
 dev = [
     "pytest>=7.4",
