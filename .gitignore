@@ -1,0 +1,74 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Tool caches
+.mypy_cache/
+.pytype/
+.pyre/
+.pytest_cache/
+ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_convert/
+
+# Logs & experiment artifacts (related to training utils like [src/ppiris/utils/logging.py](src/ppiris/utils/logging.py))
+logs/
+runs/
+tensorboard/
+events.out.tfevents.*
+
+# Model weights / checkpoints (produced by training in [src/ppiris/training_and_inference/train_ppiris.py](src/ppiris/training_and_inference/train_ppiris.py))
+checkpoints/
+*.pth
+*.bin
+*.ckpt
+*.onnx
+
+# Temporary data outputs (from split / data IO utilities such as [src/ppiris/splits/create_splits.py](src/ppiris/splits/create_splits.py) and [src/ppiris/training_and_inference/data_io.py](src/ppiris/training_and_inference/data_io.py))
+data/
+datasets/
+tmp/
+temp/
+*.tmp
+
+# Embedding cache (downloaded via fetch scripts in [src/ppiris/embeddings/fetch_embeddings.py](src/ppiris/embeddings/fetch_embeddings.py), [src/ppiris/embeddings/fetch_esmc.py](src/ppiris/embeddings/fetch_esmc.py), [src/ppiris/embeddings/fetch_prostt5.py](src/ppiris/embeddings/fetch_prostt5.py))
+emb_cache/
+embeddings_raw/
+*.npy
+*.npz
+*.h5
+
+# Plot/image artifacts (from [src/ppiris/training_and_inference/plots.py](src/ppiris/training_and_inference/plots.py))
+plots/
+figures/
+*.png
+*.pdf
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# pip caches
+pip-wheel-
