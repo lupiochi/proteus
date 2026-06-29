@@ -10,6 +10,7 @@ Preprint: https://www.biorxiv.org/content/10.64898/2026.04.27.721098v1
 
 [![Paper](https://img.shields.io/badge/paper-blue)](https://www.biorxiv.org/content/10.64898/2026.04.27.721098v1)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lupiochi/PROTEUS/blob/main/colab/PROTEUS_Colab.ipynb)
 
 ## What is PROTEUS?
 
